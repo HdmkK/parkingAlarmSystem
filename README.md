@@ -96,7 +96,7 @@ static void button_timer_func(struct timer_list* t){
 
 #### 이슈
 - 채터링 문제를 해결한 후, 버튼을 누르니 커널패닉 발생
-- 버튼 인터럽트 핸들러에서 disable_irq()부분에서 커널 패닉 발생
+- 버튼 인터럽트 핸들러의 disable_irq()부분에서 커널 패닉 발생
 #### 원인
 - disable_irq는 인터럽트 핸들러가 모두 종료될 때까지 Wait한 후, 인터럽트를 비활성화.
 
@@ -104,7 +104,7 @@ static void button_timer_func(struct timer_list* t){
 
 ![Image](https://github.com/user-attachments/assets/73b728b3-a24f-419f-a8fe-9aa67742e8ce)
 
-- 버튼 인터럽트가 실행 중인데, 그 내부에서 버튼 인터럽트를 disable_irq로 바활성화
+- 버튼 인터럽트가 실행 중인데, 그 내부에서 버튼 인터럽트를 disable_irq로 비활성화
 - 그 결과 현재 핸들러가 수행중이므로 WAIT을 하게 되고, 인터럽트 핸들러에서 스케줄링을 유발하는 동작을 했으므로 커널패닉
 - (인터럽트 핸들러는 다른 thread의 커널스택에 기생하여 실행되기 때문에 스케줄링을 유발하는 동작(ex. sleep등)을 수행해선 안됨.)
 #### 해결
